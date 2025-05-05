@@ -1,0 +1,18 @@
+
+
+.slide-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 300px;
+  z-index: 1000;
+}
+
+.slide-text {
+  text-align: center;
+  margin-top: 10px;
+  color: #666;
+  font-weight: bold;
+}

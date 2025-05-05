@@ -1,0 +1,35 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap'); */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.gradient-text-container {
+  position: relative;
+  margin: 0 auto;
+  display: inline-block;
+  width: max-content;
+  filter: drop-shadow(0px 1px 3px rgba(27, 37, 80, 0.14));
+}
+
+.gradient-text-shadow {
+  position: absolute;
+  left: 0;
+  top: 1px;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-repeat: no-repeat;
+  color: transparent;
+  background-image: linear-gradient(to right, #a855f7, #8b5cf6, #ec4899);
+  padding: 1rem 0;
+  text-shadow: 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+  position: relative;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to right, #a855f7, #8b5cf6, #ec4899);
+  padding: 1rem 0;
+}
