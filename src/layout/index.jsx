@@ -5,7 +5,6 @@ import platinLogo from "../assets/platin.png";
 import { fetchUserProfile, useRealVh } from "../hook/hook";
 import Navigation from "../components/Navigation/Navigation";
 
-
 const Layout = ({ children }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -63,7 +62,6 @@ const Layout = ({ children }) => {
 
     useRealVh();
     return () => clearInterval(interval);
-
   }, []);
   return (
     <div>
@@ -79,7 +77,7 @@ const Layout = ({ children }) => {
             <div className=" text-white">
               <img className="w-[250px] m-auto" src={platinLogo} alt="" />
               <div className="mt-8 p-2">
-                {token && (
+                {userProfile && token && (
                   <div>
                     <UserProfile userData={userProfile} />
                   </div>

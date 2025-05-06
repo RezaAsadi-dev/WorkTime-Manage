@@ -306,7 +306,7 @@ function Home() {
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col jus gap-1">
-                  آیا مطمئن هستید که می‌خواهید کار را به اتمام برسانید؟
+                  Are you sure you want to complete the task?{" "}
                 </ModalHeader>
                 <Divider />
                 <ModalBody
@@ -321,7 +321,7 @@ function Home() {
                       onClick={handleCheckOut}
                       variant="flat"
                     >
-                      بله، اتمام کار
+                      Yes, finished.{" "}
                     </Button>
                     <Button
                       className="border bg-red-500 text-white px-10 py-3"
@@ -329,7 +329,7 @@ function Home() {
                       variant="light"
                       onPress={onClose}
                     >
-                      خیر، ادامه کار
+                      No, continue working.{" "}
                     </Button>
                   </div>
                 </ModalBody>
