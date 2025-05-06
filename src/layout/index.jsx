@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { BackgroundBeamsWithCollision } from "../components/BackgroundBeamsWithCollision/BackgroundBeamsWithCollision";
 import UserProfile from "../components/userProfile";
 import platinLogo from "../assets/platin.png";
-import { useRealVh } from "../hook/hook";
+import { fetchUserProfile, useRealVh } from "../hook/hook";
 import Navigation from "../components/Navigation/Navigation";
 
-const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
 
 const Layout = ({ children }) => {
   const [date, setDate] = useState("");
@@ -18,25 +17,9 @@ const Layout = ({ children }) => {
   }, [localStorage.getItem("token")]);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (token) {
-        try {
-          const response = await fetch(`${BASE_URL}/user/api/profile`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setUserProfile(data);
-          }
-        } catch (error) {
-          console.error('Error fetching user profile:', error);
-        }
-      }
-    };
-
-    fetchUserProfile();
+    fetchUserProfile().then((data) => {
+      setUserProfile(data);
+    });
   }, [token]);
 
   useEffect(() => {
@@ -78,9 +61,9 @@ const Layout = ({ children }) => {
     updateDateTime();
     const interval = setInterval(updateDateTime, 1000);
 
+    useRealVh();
     return () => clearInterval(interval);
 
-    useRealVh();
   }, []);
   return (
     <div>

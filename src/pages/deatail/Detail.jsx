@@ -186,7 +186,7 @@ function Detail() {
     //   </div>
     // </div>
     <div>
-      <TracingBeamDemo/>
+      <TracingBeamDemo data={timesheets}/>
     </div>
   );
 }

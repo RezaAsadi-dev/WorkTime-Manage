@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CardStack, Highlight } from "../../components/card";
+import { fetchUserProfile } from "../../hook/hook";
 
 const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
 const userLogin = "user/api/login";
@@ -23,8 +24,20 @@ function Home() {
   const [checkIn, setCheckIn] = useState(false);
   const [shouldReset, setShouldReset] = useState(false);
   const [buttonActive, setButtonActive] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [confirmEndModal, setConfirmEndModal] = useState(false);
+
+  const now = new Date();
+
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    calendar: "persian",
+  };
+  const persianDate = new Intl.DateTimeFormat("fa-IR", options).format(now);
+
   const [userDatas, setUserDatas] = useState({
     username: "",
     password: "",
@@ -123,7 +136,6 @@ function Home() {
       const response = await axios.post(`${BASE_URL}${userLogin}`, userDatas, {
         headers: {
           "Content-Type": "application/json",
-          // 'Authorization': `Bearer ${yourToken}`
         },
       });
 
@@ -138,6 +150,13 @@ function Home() {
       toast.error("ورود با خطا مواجه شد");
     }
   };
+
+  useEffect(() => {
+    fetchUserProfile().then((data) => {
+      setUserProfile(data);
+    });
+  }, [token]);
+
   const CARDS = [
     {
       id: 0,
@@ -146,8 +165,9 @@ function Home() {
 
       content: (
         <p>
-          این کاربر از تاریخ [شروع] تا [پایان] به مدت{" "}
-          <Highlight> ۱۲ روز</Highlight> فعال بوده است
+          این کاربر از تاریخ {userProfile?.contract_start} تا {persianDate} به
+          مدت <Highlight> {userProfile?.worked_days} روز </Highlight> فعال بوده
+          است
         </p>
       ),
     },
@@ -157,8 +177,9 @@ function Home() {
       designation: "Total hours",
       content: (
         <p>
-          این کاربر از تاریخ [شروع] تا [پایان] به مدت{" "}
-          <Highlight> 120 ساعت</Highlight> فعال بوده است
+          این کاربر از تاریخ {userProfile?.contract_start} تا {persianDate} به
+          مدت
+          <Highlight> {userProfile?.worked_time} ساعت</Highlight> فعال بوده است
         </p>
       ),
     },
@@ -168,9 +189,11 @@ function Home() {
     <>
       <div className="container m-auto w-full  ">
         <div className="w-full  flex-col items-center justify-start">
-          <div>
-            <CardStack items={CARDS} />
-          </div>
+          {userProfile && (
+            <div>
+              <CardStack items={CARDS} />
+            </div>
+          )}
           <div className=" flex justify-center align-middle">
             <button
               onClick={() => {
