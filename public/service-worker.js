@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const cacheName = "cache-10";
+const cacheName = "cache-v-5-0";
 const staticAssets = [
   "./",
   "./index.html",
@@ -12,7 +12,6 @@ const staticAssets = [
   "./maskable-192x192.png",
   "./maskable-512x512.png",
   "./site.webmanifest",
-  "./hide-address-bar.js",
 ];
 self.addEventListener("install", async (event) => {
   event.waitUntil(async () => {
