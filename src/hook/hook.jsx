@@ -13,7 +13,7 @@ export function useRealVh() {
 }
 
 export const fetchUserProfile = async () => {
-  if (token) {
+ 
     try {
       const response = await fetch(`${BASE_URL}/user/api/profile`, {
         headers: {
@@ -27,5 +27,5 @@ export const fetchUserProfile = async () => {
     } catch (error) {
       console.error("Error fetching user profile:", error);
     }
-  }
+  
 };

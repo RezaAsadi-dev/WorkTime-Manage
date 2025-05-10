@@ -26,7 +26,7 @@ function Detail() {
   const fetchProfileData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${BASE_URL}${profileEndpoint}`, {
+      const response = await axios.get(`${BASE_URL}/${profileEndpoint}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -52,7 +52,7 @@ function Detail() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${BASE_URL}${timesheetsEndpoint}`,
+        `${BASE_URL}/${timesheetsEndpoint}`,
         { page },
         {
           headers: {
