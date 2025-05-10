@@ -9,6 +9,8 @@ const staticAssets = [
   "./apple-touch-icon.png",
   "./android-chrome-192x192.png",
   "./android-chrome-512x512.png",
+  "./maskable-192x192.png",
+  "./maskable-512x512.png",
   "./site.webmanifest",
 ];
 self.addEventListener("install", async (event) => {
