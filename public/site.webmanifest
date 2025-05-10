@@ -2,7 +2,7 @@
   "name": "Platin-Worker",
   "short_name": "Platin",
   "description": "A work time management application",
-  "start_url": "index.html?fullscreen=true",
+  "start_url": "/",
   "display": "fullscreen",
   "background_color": "#ffffff",
   "theme_color": "#4a90e2",
