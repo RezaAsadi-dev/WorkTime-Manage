@@ -7,9 +7,11 @@ const staticAssets = [
   "./site.webmanifest",
 ];
 self.addEventListener("install", async (event) => {
-  const cache = await caches.open(cacheName);
-  await cache.addAll(staticAssets);
-  return self.skipWaiting();
+  event.waitUntil(async () => {
+    const cache = await caches.open(cacheName);
+    await cache.addAll(staticAssets);
+    return self.skipWaiting();
+  });
 });
 
 self.addEventListener("activate", (event) => {
