@@ -17,6 +17,14 @@ export default function TracingBeamDemo({ data }) {
     });
   }, []);
 
+  function calculateTotalPay(timeString, salaryPerHour) {
+    if (!timeString || !salaryPerHour) return 0;
+
+    const [hours, minutes] = timeString.split(":").map(Number);
+    const totalHours = hours + minutes / 60;
+    return totalHours * salaryPerHour;
+  }
+
   const dummyContent = [
     {
       title: userProfile?.name,
@@ -45,7 +53,7 @@ export default function TracingBeamDemo({ data }) {
                 Basic hourly salary amount :
               </span>
               <span className="infomationDetails">
-                {Number(userProfile?.salary)?.toLocaleString()} ریال
+                ریال {Number(userProfile?.salary)?.toLocaleString()}
               </span>
             </div>
           </div>
@@ -57,37 +65,58 @@ export default function TracingBeamDemo({ data }) {
       title: "30 day",
       description: (
         <>
-          <table className="border-collapse w-full shadow">
-            <thead className="bg-gray-100">
-              <tr className="border py-4 text-center font-normal text-sm">
-                <th className="px-4 py-2">Entry Time</th>
-                <th className="px-4 py-2">Exit Time</th>
-                <th className="px-4 py-2">Date</th>
-                <th className="px-4 py-2">Total Time (minutes)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="text-center py-4">
-                    No timesheet data available
-                  </td>
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-full border-collapse shadow">
+              <thead className="bg-gray-100">
+                <tr className="border py-4 text-center font-normal text-sm">
+                  <th className="px-4 py-2 whitespace-nowrap"> - </th>
+                  <th className="px-4 py-2 whitespace-nowrap">Entry Time</th>
+                  <th className="px-4 py-2 whitespace-nowrap">Exit Time</th>
+                  <th className="px-4 py-2 whitespace-nowrap">Date</th>
+                  <th className="px-4 py-2 whitespace-nowrap">Total Time</th>
+                  <th className="px-4 py-2 whitespace-nowrap">Daily income</th>
                 </tr>
-              ) : (
-                data?.reverse()?.map((timesheet) => (
-                  <tr
-                    key={timesheet.id}
-                    className="border py-4 text-center font-normal text-sm"
-                  >
-                    <td className="px-4 py-2">{timesheet.check_in || "-"}</td>
-                    <td className="px-4 py-2">{timesheet.check_out || "-"}</td>
-                    <td className="px-4 py-2">{timesheet.date || "-"}</td>
-                    <td className="px-4 py-2">{timesheet.total_time || "0"}</td>
+              </thead>
+              <tbody>
+                {data?.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4">
+                      No timesheet data available
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  data?.reverse()?.map((timesheet, index) => (
+                    <tr
+                      key={timesheet.id}
+                      className="border py-4 text-center font-normal text-sm hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.check_in || "-"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.check_out || "-"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.date || "-"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.total_time || "0"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {calculateTotalPay(
+                          timesheet.total_time,
+                          userProfile?.salary
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </>
       ),
       badge: "Report",
@@ -105,15 +134,6 @@ export default function TracingBeamDemo({ data }) {
             <p className={"text-xl mb-4"}>{item.title}</p>
 
             <div className="text-sm prose prose-sm dark:prose-invert">
-              {item?.image && (
-                <img
-                  src={item.image || "/placeholder.svg"}
-                  alt="blog thumbnail"
-                  height="1000"
-                  width="1000"
-                  className="rounded-lg mb-10 object-cover"
-                />
-              )}
               {item.description}
             </div>
           </div>

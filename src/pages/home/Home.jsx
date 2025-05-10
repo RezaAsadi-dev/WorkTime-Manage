@@ -22,8 +22,9 @@ const checkOutEndpoint = "user/api/check-out";
 function Home() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [checkIn, setCheckIn] = useState(false);
-  const [shouldReset, setShouldReset] = useState(false);
-  const [buttonActive, setButtonActive] = useState(false);
+  const [buttonActive, setButtonActive] = useState(
+    localStorage.getItem("workstatus") === "IN"
+  );
   const [userProfile, setUserProfile] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [confirmEndModal, setConfirmEndModal] = useState(false);
@@ -49,6 +50,11 @@ function Home() {
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
+    const workStatus = localStorage.getItem("workstatus");
+    if (workStatus === "IN") {
+      setCheckIn(true);
+      setButtonActive(true);
+    }
   }, []);
 
   const handleSlideComplete = async () => {
@@ -75,13 +81,17 @@ function Home() {
 
       if (response.data.status === 200) {
         setCheckIn(true);
-        toast.success("کار شما با موفقیت شروع شد");
+        setButtonActive(true);
+        localStorage.setItem("workstatus", "IN");
+        toast.success("Your task has started successfully");
       } else {
         setCheckIn(false);
+        setButtonActive(false);
+        localStorage.removeItem("workstatus");
         toast.error(response.data.message);
       }
     } catch (err) {
-      toast.error("مشکلی وجود دارد");
+      toast.error("An issue has occurred");
       console.log(err);
     }
   };
@@ -97,14 +107,14 @@ function Home() {
 
       if (response.data.status === 200) {
         setCheckIn(false);
-        setShouldReset(true);
-        toast.success("کار شما با موفقیت به اتمام رسید");
+        setButtonActive(false);
+        localStorage.removeItem("workstatus");
+        toast.success("Your task was completed successfully");
         setConfirmEndModal(false);
-        setTimeout(() => setShouldReset(false), 100);
       }
     } catch (err) {
       console.error("Check-out failed:", err);
-      toast.error("خطا در اتمام کار");
+      toast.error("Error completing the task");
     }
   };
 
@@ -142,13 +152,13 @@ function Home() {
       if (response.data.status === 200) {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
-        toast.success("با موفقیت وارد شدید");
-        fetchUserProfile()
+        toast.success("Login successful");
         onOpenChange();
+        window.location.reload();
       }
     } catch (err) {
       console.error("Login failed:", err);
-      toast.error("ورود با خطا مواجه شد");
+      toast.error("Login failed");
     }
   };
 
@@ -166,9 +176,9 @@ function Home() {
 
       content: (
         <p>
-          این کاربر از تاریخ {userProfile?.contract_start} تا {persianDate} به
-          مدت <Highlight> {userProfile?.worked_days} روز </Highlight> فعال بوده
-          است
+          This user has been active from {userProfile?.contract_start} to{" "}
+          {persianDate}
+          for a total of <Highlight>{userProfile?.worked_days} days</Highlight>.
         </p>
       ),
     },
@@ -178,9 +188,10 @@ function Home() {
       designation: "Total hours",
       content: (
         <p>
-          این کاربر از تاریخ {userProfile?.contract_start} تا {persianDate} به
-          مدت
-          <Highlight> {userProfile?.worked_time} ساعت</Highlight> فعال بوده است
+          This user has been active from {userProfile?.contract_start} to{" "}
+          {persianDate}
+          for a total of <Highlight>{userProfile?.worked_time} hours</Highlight>
+          .
         </p>
       ),
     },
@@ -201,7 +212,6 @@ function Home() {
                 if (!localStorage.getItem("token")) {
                   onOpen();
                 } else {
-                  setButtonActive(!buttonActive);
                   handleSlideComplete();
                 }
               }}
@@ -306,26 +316,25 @@ function Home() {
           <ModalContent className="py-4">
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col jus gap-1">
+                <ModalHeader className="flex flex-col">
                   Are you sure you want to complete the task?{" "}
                 </ModalHeader>
                 <Divider />
                 <ModalBody
                   style={{
-                    maxHeight: "200px",
                     fontSize: 16,
                   }}
                 >
-                  <div className="w-full mt-4 flex justify-between items-center gap-4">
+                  <div className="w-full mt-4 flex justify-between items-center ">
                     <Button
-                      className="border bg-green-500 text-white px-10 py-3"
+                      className="border bg-green-500 text-white px-10 py-3 "
                       onClick={handleCheckOut}
                       variant="flat"
                     >
                       Yes, finished.{" "}
                     </Button>
                     <Button
-                      className="border bg-red-500 text-white px-10 py-3"
+                      className="border bg-red-500 text-white px-5 py-3 ml-1"
                       color="danger"
                       variant="light"
                       onPress={onClose}

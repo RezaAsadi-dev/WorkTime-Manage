@@ -46,7 +46,7 @@ export const CardStack = ({ items, offset = 10, scaleFactor = 0.06 }) => {
             zIndex: cards.length - index,
           }}
         >
-          <div className="font-normal text-[#f5f5f5] text-right">{card.content}</div>
+          <div className="font-normal text-[#f5f5f5] text-left">{card.content}</div>
           <div>
             <p className="text-neutral-500 font-medium">{card.name}</p>
             <p className="text-neutral-400 font-normal">{card.designation}</p>
