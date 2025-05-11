@@ -13,6 +13,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { CardStack, Highlight } from "../../components/card";
 import { fetchUserProfile } from "../../hook/hook";
+import Timer from "../../components/Timer/Timer";
 
 const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
 const userLogin = "user/api/login";
@@ -82,6 +83,7 @@ function Home() {
         setCheckIn(true);
         setButtonActive(true);
         localStorage.setItem("workstatus", "IN");
+        localStorage.removeItem("workTimer");
         toast.success("Your task has started successfully");
       } else {
         setCheckIn(false);
@@ -108,6 +110,12 @@ function Home() {
         setCheckIn(false);
         setButtonActive(false);
         localStorage.removeItem("workstatus");
+        const savedTimer = localStorage.getItem("workTimer");
+        if (savedTimer) {
+          const timerData = JSON.parse(savedTimer);
+          localStorage.setItem("lastWorkDuration", timerData.time.toString());
+          localStorage.removeItem("workTimer");
+        }
         toast.success("Your task was completed successfully");
         setConfirmEndModal(false);
       }
@@ -176,8 +184,8 @@ function Home() {
       content: (
         <p>
           This user has been active from {userProfile?.contract_start} to{" "}
-          {persianDate} {" "}
-          for a total of <Highlight>{userProfile?.worked_days} days</Highlight>.
+          {persianDate} for a total of{" "}
+          <Highlight>{userProfile?.worked_days} days</Highlight>.
         </p>
       ),
     },
@@ -188,9 +196,8 @@ function Home() {
       content: (
         <p>
           This user has been active from {userProfile?.contract_start} to{" "}
-          {persianDate} {" "}
-          for a total of <Highlight>{userProfile?.worked_time} hours</Highlight>
-          .
+          {persianDate} for a total of{" "}
+          <Highlight>{userProfile?.worked_time} hours</Highlight>.
         </p>
       ),
     },
@@ -205,6 +212,13 @@ function Home() {
               <CardStack items={CARDS} />
             </div>
           )}
+
+          {token && buttonActive && (
+            <div className="my-8">
+              <Timer />
+            </div>
+          )}
+
           {token ? (
             <div className=" flex justify-center align-middle">
               <button
@@ -228,8 +242,7 @@ function Home() {
             <div className=" flex justify-center align-middle">
               <button
                 onClick={() => {
-                    onOpen();
-                  
+                  onOpen();
                 }}
                 className={`group duration-500 before:duration-500 after:duration-500 underline underline-offset-2 relative ${
                   buttonActive
@@ -237,7 +250,7 @@ function Home() {
                     : "bg-gradient-to-b from-[#262626] to-[#0a0a0a] text-gray-50 after:right-8 after:top-3 before:right-1 before:top-1 before:blur-lg after:blur before:bg-red-700 after:bg-[rgb(238,73,73)]"
                 } h-16 w-[90%] border text-left p-3 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:z-10 before:rounded-full after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:rounded-full`}
               >
-               Login
+                Login
               </button>
             </div>
           )}
