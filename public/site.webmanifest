@@ -1,6 +1,6 @@
 {
-  "name": "platin-work-time",
-  "short_name": "platin-work-time",
+  "name": "platin-work-time1",
+  "short_name": "platin-work-time1",
   "description": "A work time management application",
   "start_url": "/",
   "display": "fullscreen",
@@ -59,7 +59,7 @@
   "dir": "ltr",
   "lang": "fa",
   "prefer_related_applications": false,
-  "id": "Platin-Worker5007",
+  "id": "Platin-Worker50071",
   "related_applications": [
     {
       "platform": "windows",
