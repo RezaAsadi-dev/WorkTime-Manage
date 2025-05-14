@@ -5,7 +5,6 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { HeroUIProvider } from "@heroui/react";
 import { ToastContainer } from "react-toastify";
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -29,5 +28,3 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>
 );
 
-// Register the service worker
-serviceWorkerRegistration.register();
