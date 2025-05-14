@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const cacheName = "cache-v1";
+const cacheName = "p-cache-v2";
 const staticAssets = [
   "./",
   "./index.html",

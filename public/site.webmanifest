@@ -55,12 +55,20 @@
       ]
     }
   ],
-  "categories": [
-    "productivity",
-    "utilities"
-  ],
+  "categories": ["productivity", "utilities"],
   "dir": "ltr",
   "lang": "fa",
   "prefer_related_applications": false,
-  "id": "Platin-Worker5007"
+  "id": "Platin-Worker5007",
+  "related_applications": [
+    {
+      "platform": "windows",
+      "url": "https://platin-work-time-manage.vercel.app/",
+      "id": "platin-work-time-manage.vercel.app"
+    },
+    {
+      "platform": "play",
+      "url": "https://platin-work-time-manage.vercel.app/"
+    }
+  ]
 }
