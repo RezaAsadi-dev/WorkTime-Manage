@@ -1,9 +1,9 @@
 {
-  "name": "platin-work-time2",
-  "short_name": "platin-work-time2",
+  "name": "platin-work",
+  "short_name": "platin-work",
   "description": "A work time management application",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#ffffff",
   "theme_color": "#4a90e2",
   "orientation": "portrait-primary",
@@ -59,16 +59,16 @@
   "dir": "ltr",
   "lang": "fa",
   "prefer_related_applications": false,
-  "id": "Platin-Worker5007112",
+  "id": "Platin-Worker50071",
   "related_applications": [
     {
       "platform": "windows",
-      "url": "https://platin-work-time-manage.vercel.app/",
-      "id": "platin-work-time-manage.vercel.app"
+      "url": "https://work.platinco.ir/",
+      "id": "https://work.platinco.ir/"
     },
     {
       "platform": "play",
-      "url": "https://platin-work-time-manage.vercel.app/"
+      "url": "https://work.platinco.ir/"
     }
   ]
 }
