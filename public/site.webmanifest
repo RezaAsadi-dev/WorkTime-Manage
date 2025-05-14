@@ -1,6 +1,6 @@
 {
-  "name": "Platin-Worker",
-  "short_name": "Platin",
+  "name": "platin-work-time",
+  "short_name": "platin-work-time",
   "description": "A work time management application",
   "start_url": "/",
   "display": "fullscreen",
