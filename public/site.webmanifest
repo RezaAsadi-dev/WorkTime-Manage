@@ -59,7 +59,8 @@
     "productivity",
     "utilities"
   ],
-  "dir": "rtl",
+  "dir": "ltr",
   "lang": "fa",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "id": "Platin-Worker5007"
 }
