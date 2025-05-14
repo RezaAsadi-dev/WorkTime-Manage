@@ -1,9 +1,9 @@
 {
-  "name": "platin-work-time1",
-  "short_name": "platin-work-time1",
+  "name": "platin-work-time2",
+  "short_name": "platin-work-time2",
   "description": "A work time management application",
   "start_url": "/",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4a90e2",
   "orientation": "portrait-primary",
