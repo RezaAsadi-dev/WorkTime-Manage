@@ -29,13 +29,14 @@ function Home() {
   const [userProfile, setUserProfile] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [confirmEndModal, setConfirmEndModal] = useState(false);
-
+  const [loginLoader, setLoginLoader] = useState(false);
   const now = new Date();
 
   const options = {
     year: "numeric",
     month: "numeric",
     day: "numeric",
+    numberingSystem: "latn",
   };
   const persianDate = new Intl.DateTimeFormat("fa-IR", options).format(now);
 
@@ -148,6 +149,7 @@ function Home() {
 
     const hasError = Object.values(errors).some((err) => err);
     if (hasError) return;
+    setLoginLoader(true);
 
     try {
       const response = await axios.post(`${BASE_URL}/${userLogin}`, userDatas, {
@@ -155,6 +157,7 @@ function Home() {
           "Content-Type": "application/json",
         },
       });
+      setLoginLoader(false);
 
       if (response.data.status === 200) {
         localStorage.setItem("token", response.data.token);
@@ -164,6 +167,7 @@ function Home() {
         window.location.reload();
       }
     } catch (err) {
+      setLoginLoader(false);
       console.error("Login failed:", err);
       toast.error("Login failed");
     }
@@ -261,10 +265,10 @@ function Home() {
           isOpen={isOpen}
           onOpenChange={onOpenChange}
         >
-          <ModalContent className="py-4">
+          <ModalContent className="py-4 bg-gradient-to-b from-[#262626] to-[#0a0a0a]">
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col jus gap-1">
+                <ModalHeader className="flex flex-col jus gap-1 text-white">
                   Please log in first, then start the task.{" "}
                 </ModalHeader>
                 <Divider />
@@ -287,6 +291,9 @@ function Home() {
                         name="username"
                         placeholder="username"
                         className="p-2 w-full rounded !outline-none"
+                        classNames={{
+                          inputWrapper: "bg-zinc-200",
+                        }}
                         onChange={changeHandler}
                       />
                       {userErrors.username && (
@@ -304,6 +311,9 @@ function Home() {
                         placeholder="password"
                         className="p-2 w-full rounded !outline-none"
                         onChange={changeHandler}
+                        classNames={{
+                          inputWrapper: "bg-zinc-200",
+                        }}
                       />
                       {userErrors.passwoard && (
                         <span className="text-red-500 text-xs">
@@ -314,14 +324,15 @@ function Home() {
 
                     <div className="w-full mt-4 flex justify-between items-center gap-4">
                       <Button
-                        className="border bg-green-500 text-white px-10 py-3"
+                        className=" bg-green-500 text-white px-10 py-3"
                         type="submit"
                         variant="flat"
+                        isLoading={loginLoader}
                       >
                         submit
                       </Button>
                       <Button
-                        className="border bg-red-500 text-white px-10 py-3"
+                        className=" bg-red-500 text-white px-10 py-3"
                         color="danger"
                         variant="light"
                         onPress={onClose}
@@ -343,10 +354,10 @@ function Home() {
           isOpen={confirmEndModal}
           onOpenChange={() => setConfirmEndModal(false)}
         >
-          <ModalContent className="py-4">
+          <ModalContent className="py-4 bg-gradient-to-b from-[#262626] to-[#0a0a0a]">
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col">
+                <ModalHeader className="flex flex-col text-white">
                   Are you sure you want to complete the task?{" "}
                 </ModalHeader>
                 <Divider />
@@ -357,14 +368,14 @@ function Home() {
                 >
                   <div className="w-full mt-4 flex justify-between items-center ">
                     <Button
-                      className="border bg-green-500 text-white px-10 py-3 "
+                      className=" bg-green-500 text-white px-10 py-3 "
                       onPress={handleCheckOut}
                       variant="flat"
                     >
                       Yes, finished.{" "}
                     </Button>
                     <Button
-                      className="border bg-red-500 text-white px-5 py-3 ml-1"
+                      className=" bg-red-500 text-white px-5 py-3 ml-1"
                       color="danger"
                       variant="light"
                       onPress={onClose}

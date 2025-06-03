@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const cacheName = "platin-work-time-cache-v1";
+const cacheName = "platin-work-time-cache-v2";
 const staticAssets = [
   "./",
   "./index.html",

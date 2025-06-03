@@ -33,10 +33,10 @@ export default function UserProfile({ userData }) {
         onOpenChange={onOpenChange}
         classNames={{ backdrop: "z-[99999]", wrapper: "z-[99999]" }}
       >
-        <ModalContent className="py-4">
+        <ModalContent className="py-4 bg-gradient-to-b from-[#262626] to-[#0a0a0a]">
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className="flex flex-col gap-1 text-white">
                 Are you sure you want to logout?
               </ModalHeader>
               <Divider />

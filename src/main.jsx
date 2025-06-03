@@ -13,6 +13,7 @@ createRoot(document.getElementById("root")).render(
         <App />
         <ToastContainer
           position="top-center"
+          style={{  zIndex: 100000 }}
           autoClose={3000}
           hideProgressBar={true}
           newestOnTop={false}
