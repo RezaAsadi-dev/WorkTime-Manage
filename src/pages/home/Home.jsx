@@ -224,7 +224,7 @@ function Home() {
           )}
 
           {token ? (
-            <div className=" flex justify-center align-middle">
+            <div className=" flex justify-center align-middle mb-32">
               <button
                 onClick={() => {
                   if (!localStorage.getItem("token")) {
@@ -258,6 +258,7 @@ function Home() {
               </button>
             </div>
           )}
+
         </div>
         <Modal
           classNames={{ backdrop: "z-[99999]", wrapper: "z-[99999]" }}
