@@ -16,9 +16,9 @@ import { fetchUserProfile } from "../../hook/hook";
 import Timer from "../../components/Timer/Timer";
 
 const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
-const userLogin = "user/api/login";
-const checkInEndpoint = "user/api/check-in";
-const checkOutEndpoint = "user/api/check-out";
+const userLogin = "api/employee/login";
+const checkInEndpoint = "api/employee/checkin";
+const checkOutEndpoint = "api/employee/checkout";
 
 function Home() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -110,13 +110,13 @@ function Home() {
       if (response.data.status === 200) {
         setCheckIn(false);
         setButtonActive(false);
+        
+        // Clear all timer related data
+        localStorage.removeItem("lastWorkDuration");
         localStorage.removeItem("workstatus");
-        const savedTimer = localStorage.getItem("workTimer");
-        if (savedTimer) {
-          const timerData = JSON.parse(savedTimer);
-          localStorage.setItem("lastWorkDuration", timerData.time.toString());
-          localStorage.removeItem("workTimer");
-        }
+        localStorage.removeItem("workTimer");
+        localStorage.removeItem("timeIntervals");
+        
         toast.success("Your task was completed successfully");
         setConfirmEndModal(false);
       }
@@ -258,7 +258,6 @@ function Home() {
               </button>
             </div>
           )}
-
         </div>
         <Modal
           classNames={{ backdrop: "z-[99999]", wrapper: "z-[99999]" }}

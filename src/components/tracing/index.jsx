@@ -1,10 +1,8 @@
 import { twMerge } from "tailwind-merge";
 import { TracingBeam } from "./ui/index";
 import { clsx } from "clsx";
-import { useEffect, useState } from "react";
-import { fetchUserProfile } from "../../hook/hook";
 import { Pagination } from "@heroui/pagination";
-
+import toman from "../../assets/toman.svg";
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
@@ -19,32 +17,50 @@ export default function TracingBeamDemo({
 }) {
   function calculateTotalPay(timeString, salaryPerHour) {
     if (!timeString || !salaryPerHour) return 0;
+
     const [hours, minutes] = timeString.split(":").map(Number);
+
+    if (
+      isNaN(hours) ||
+      isNaN(minutes) ||
+      hours < 0 ||
+      minutes < 0 ||
+      minutes >= 60
+    )
+      return 0;
+
     const totalHours = hours + minutes / 60;
-    return totalHours * salaryPerHour;
+    const totalPay = totalHours * salaryPerHour;
+
+    return Math.floor(totalPay); // یا Math.round یا Math.ceil بسته به نیازت
   }
 
   const dummyContent = [
     {
       title: userProfile?.name || "Loading...",
       description: (
-        <div className="p-5 grid lg:grid-cols-4 md:grid-cols-2 border-2 gap-4">
+        <div className="p-5 grid lg:grid-cols-4 md:grid-cols-2 border-1 rounded-md gap-4">
           <div>
             <span className="font-normal text-sm">Contract start date:</span>
-            <span className="infomationDetails">
+            <span className="infomationDetails ml-2">
               {userProfile?.contractStartDate}
             </span>
           </div>
           <div>
-            <span className="font-normal text-sm">Contract expiration date:</span>
-            <span className="infomationDetails">
+            <span className="font-normal text-sm">
+              Contract expiration date:
+            </span>
+            <span className="infomationDetails ml-2">
               {userProfile?.contractExpirationDate}
             </span>
           </div>
           <div>
-            <span className="font-normal text-sm">Basic hourly salary amount:</span>
-            <span className="infomationDetails">
-              ریال {Number(userProfile?.basicHourlySalary).toLocaleString()}
+            <span className="font-normal text-sm">
+              Basic hourly salary amount:
+            </span>
+            <span className="infomationDetails ml-2">
+              <img src={toman} alt="toman" className="w-4 h-4 inline-block" />{" "}
+              {Number(userProfile?.basicHourlySalary).toLocaleString()}
             </span>
           </div>
         </div>
@@ -70,11 +86,15 @@ export default function TracingBeamDemo({
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4">Loading...</td>
+                    <td colSpan="6" className="text-center py-4">
+                      Loading...
+                    </td>
                   </tr>
                 ) : data?.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4">No timesheet data available</td>
+                    <td colSpan="6" className="text-center py-4">
+                      No timesheet data available
+                    </td>
                   </tr>
                 ) : (
                   data.map((timesheet, index) => (
@@ -85,12 +105,28 @@ export default function TracingBeamDemo({
                       <td className="px-4 py-2 whitespace-nowrap">
                         {(currentPage - 1) * 10 + index + 1}
                       </td>
-                      <td className="px-4 py-2 whitespace-nowrap">{timesheet.check_in || "-"}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{timesheet.check_out || "-"}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{timesheet.date || "-"}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{timesheet.total_time || "0"}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
-                        {calculateTotalPay(timesheet.total_time, userProfile?.basicHourlySalary)}
+                        {timesheet.check_in || "-"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.check_out || "-"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.date || "-"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        {timesheet.total_time || "0"}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <img
+                          src={toman}
+                          alt="toman"
+                          className="w-4 h-4 inline-block"
+                        />{" "}
+                        {calculateTotalPay(
+                          timesheet.total_time,
+                          userProfile?.basicHourlySalary
+                        ).toLocaleString()}
                       </td>
                     </tr>
                   ))
@@ -116,7 +152,7 @@ export default function TracingBeamDemo({
     <TracingBeam className="px-6">
       <div className="max-w-2xl mx-auto antialiased pt-4 relative">
         {dummyContent.map((item, index) => (
-          <div key={`content-${index}`} className="mb-[10rem]">
+          <div key={`content-${index}`} className="mb-[5rem]">
             <h2 className="bg-black text-white rounded-full text-sm w-fit px-4 py-1 mb-4">
               {item.badge}
             </h2>

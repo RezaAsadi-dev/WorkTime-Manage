@@ -15,7 +15,7 @@ export function useRealVh() {
 export const fetchUserProfile = async () => {
   if (token) {
     try {
-      const response = await fetch(`${BASE_URL}/user/api/profile`, {
+      const response = await fetch(`${BASE_URL}/api/employee/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

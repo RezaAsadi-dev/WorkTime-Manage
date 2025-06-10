@@ -6,8 +6,8 @@ import "./style.css";
 import TracingBeamDemo from "../../components/tracing";
 
 const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
-const profileEndpoint = "user/api/profile";
-const timesheetsEndpoint = "user/api/my_timesheets";
+const profileEndpoint = "api/employee/profile";
+const timesheetsEndpoint = "api/employee/timesheet";
 
 function Detail() {
   const navigate = useNavigate();
