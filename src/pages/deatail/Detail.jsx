@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import { Pagination } from "@heroui/react";
 import "./style.css";
 import TracingBeamDemo from "../../components/tracing";
@@ -26,7 +26,7 @@ function Detail() {
   const fetchProfileData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${BASE_URL}/${profileEndpoint}`, {
+      const response = await axiosInstance.get(`${BASE_URL}/${profileEndpoint}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ function Detail() {
   const fetchTimesheets = async (page = 1) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BASE_URL}/${timesheetsEndpoint}`,
         { page },
         {

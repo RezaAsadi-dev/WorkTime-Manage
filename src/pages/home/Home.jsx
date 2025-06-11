@@ -9,7 +9,7 @@ import { Divider } from "@heroui/react";
 import { Form, Input, Button } from "@heroui/react";
 import "./style.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import { toast } from "react-toastify";
 import { CardStack, Highlight } from "../../components/card";
 import { fetchUserProfile } from "../../hook/hook";
@@ -73,7 +73,7 @@ function Home() {
 
   const handleCheckIn = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/${checkInEndpoint}`, {
+      const response = await axiosInstance.get(`${BASE_URL}/${checkInEndpoint}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -100,7 +100,7 @@ function Home() {
 
   const handleCheckOut = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/${checkOutEndpoint}`, {
+      const response = await axiosInstance.get(`${BASE_URL}/${checkOutEndpoint}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -152,7 +152,7 @@ function Home() {
     setLoginLoader(true);
 
     try {
-      const response = await axios.post(`${BASE_URL}/${userLogin}`, userDatas, {
+      const response = await axiosInstance.post(`${BASE_URL}/${userLogin}`, userDatas, {
         headers: {
           "Content-Type": "application/json",
         },
