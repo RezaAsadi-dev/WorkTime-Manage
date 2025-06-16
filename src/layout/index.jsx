@@ -8,12 +8,12 @@ import Navigation from "../components/Navigation/Navigation";
 const Layout = ({ children }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem("platintoken"));
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
-  }, [localStorage.getItem("token")]);
+    setToken(localStorage.getItem("platintoken"));
+  }, [localStorage.getItem("platintoken")]);
 
   useEffect(() => {
     fetchUserProfile().then((data) => {

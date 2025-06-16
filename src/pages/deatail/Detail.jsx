@@ -25,7 +25,7 @@ function Detail() {
 
   const fetchProfileData = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("platintoken");
       const response = await axiosInstance.get(`${BASE_URL}/${profileEndpoint}`, {
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +50,7 @@ function Detail() {
 
   const fetchTimesheets = async (page = 1) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("platintoken");
       const response = await axiosInstance.post(
         `${BASE_URL}/${timesheetsEndpoint}`,
         { page },

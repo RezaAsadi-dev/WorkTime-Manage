@@ -21,7 +21,7 @@ const checkInEndpoint = "api/employee/checkin";
 const checkOutEndpoint = "api/employee/checkout";
 
 function Home() {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem("platintoken"));
   const [checkIn, setCheckIn] = useState(false);
   const [buttonActive, setButtonActive] = useState(
     localStorage.getItem("workstatus") === "IN"
@@ -50,7 +50,7 @@ function Home() {
   });
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
+    setToken(localStorage.getItem("platintoken"));
     const workStatus = localStorage.getItem("workstatus");
     if (workStatus === "IN") {
       setCheckIn(true);
@@ -59,7 +59,7 @@ function Home() {
   }, []);
 
   const handleSlideComplete = async () => {
-    if (!localStorage.getItem("token")) {
+    if (!localStorage.getItem("platintoken")) {
       onOpen();
       return;
     }
@@ -160,7 +160,7 @@ function Home() {
       setLoginLoader(false);
 
       if (response.data.status === 200) {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("platintoken", response.data.token);
         setToken(response.data.token);
         toast.success("Login successful");
         onOpenChange();
@@ -227,7 +227,7 @@ function Home() {
             <div className=" flex justify-center align-middle mb-32">
               <button
                 onClick={() => {
-                  if (!localStorage.getItem("token")) {
+                  if (!localStorage.getItem("platintoken")) {
                     onOpen();
                   } else {
                     handleSlideComplete();

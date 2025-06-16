@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Home from "./pages/home/Home";
 import Detail from "./pages/deatail/Detail";
 import Layout from "./layout";
@@ -7,7 +7,8 @@ function App() {
     <div className="font-vazir">
       <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/detail" element={<Detail />} />
         </Routes>
       </Layout>

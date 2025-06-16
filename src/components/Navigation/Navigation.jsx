@@ -8,11 +8,11 @@ import history from "../../assets/files-history.svg";
 const Navigation = ({ theme = "dark" }) => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(
-    location.pathname === "/" ? "home" : location.pathname.slice(1)
+    location.pathname === "/home" ? "home" : location.pathname.slice(1)
   );
 
   const handleTabClick = (e, tab) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("platintoken");
     if (!token) {
       e.preventDefault();
       toast.error("Please log in first");
@@ -26,7 +26,7 @@ const Navigation = ({ theme = "dark" }) => {
       id: "home",
       label: "Home",
       icon: <img src={home} alt="Home" />,
-      path: "/",
+      path: "/home",
     },
     {
       id: "detail",

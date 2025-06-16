@@ -9,7 +9,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       // Clear all auth related data
-      localStorage.removeItem('token');
+      localStorage.removeItem('platintoken');
       localStorage.removeItem('workstatus');
       localStorage.removeItem('workTimer');
       localStorage.removeItem('lastWorkDuration');

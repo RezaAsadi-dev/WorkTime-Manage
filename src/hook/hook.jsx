@@ -1,6 +1,6 @@
 import axiosInstance from "../utils/axiosConfig";
 
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("platintoken");
 const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
 
 export function useRealVh() {
