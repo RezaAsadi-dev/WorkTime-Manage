@@ -32,7 +32,7 @@ export default function TracingBeamDemo({
     const totalHours = hours + minutes / 60;
     const totalPay = totalHours * salaryPerHour;
 
-    return Math.floor(totalPay); // یا Math.round یا Math.ceil بسته به نیازت
+    return Math.floor(totalPay);
   }
 
   const dummyContent = [

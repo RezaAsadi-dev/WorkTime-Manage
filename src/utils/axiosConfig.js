@@ -16,7 +16,7 @@ axiosInstance.interceptors.response.use(
       localStorage.removeItem('timeIntervals');
       
       // Reload the page to redirect to login
-      window.location.reload();
+      // window.location.reload();
     }
     return Promise.reject(error);
   }

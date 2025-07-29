@@ -52,7 +52,7 @@ function Detail() {
     try {
       const token = localStorage.getItem("platintoken");
       const response = await axiosInstance.post(
-        `${BASE_URL}/${timesheetsEndpoint}`,
+        `${BASE_URL}${timesheetsEndpoint}`,
         { page },
         {
           headers: {
