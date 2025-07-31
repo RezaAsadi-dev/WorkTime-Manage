@@ -14,6 +14,8 @@ import { toast } from "react-toastify";
 import { CardStack, Highlight } from "../../components/card";
 import { fetchUserProfile } from "../../hook/hook";
 import Timer from "../../components/Timer/Timer";
+import useGeoLocation from "../../hook/geoLocation";
+import StartEndWorkButton from "../../components/StartEndWorkButton/StartEndWorkButton";
 
 const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
 const userLogin = "api/employee/login";
@@ -22,6 +24,8 @@ const checkOutEndpoint = "api/employee/checkout";
 
 function Home() {
   const [token, setToken] = useState(localStorage.getItem("platintoken"));
+  const { location, error } = useGeoLocation();
+  console.log(location, error);
   const [checkIn, setCheckIn] = useState(false);
   const [buttonActive, setButtonActive] = useState(
     localStorage.getItem("workstatus") === "IN"
@@ -73,12 +77,15 @@ function Home() {
 
   const handleCheckIn = async () => {
     try {
-      const response = await axiosInstance.get(`${BASE_URL}/${checkInEndpoint}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(
+        `${BASE_URL}/${checkInEndpoint}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.status === 200) {
         setCheckIn(true);
@@ -100,23 +107,26 @@ function Home() {
 
   const handleCheckOut = async () => {
     try {
-      const response = await axiosInstance.get(`${BASE_URL}/${checkOutEndpoint}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(
+        `${BASE_URL}/${checkOutEndpoint}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.status === 200) {
         setCheckIn(false);
         setButtonActive(false);
-        
+
         // Clear all timer related data
         localStorage.removeItem("lastWorkDuration");
         localStorage.removeItem("workstatus");
         localStorage.removeItem("workTimer");
         localStorage.removeItem("timeIntervals");
-        
+
         toast.success("Your task was completed successfully");
         setConfirmEndModal(false);
       }
@@ -152,11 +162,15 @@ function Home() {
     setLoginLoader(true);
 
     try {
-      const response = await axiosInstance.post(`${BASE_URL}/${userLogin}`, userDatas, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axiosInstance.post(
+        `${BASE_URL}/${userLogin}`,
+        userDatas,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setLoginLoader(false);
 
       if (response.data.status === 200) {
@@ -210,6 +224,9 @@ function Home() {
   return (
     <>
       <div className="container m-auto w-full  ">
+        {/* {location && <p>{location.lat}</p>}
+        {location && <p>{location.lng}</p>}
+        {error && <p>{error}</p>} */}
         <div className="w-full  flex-col items-center justify-start">
           {userProfile && (
             <div>
@@ -222,7 +239,7 @@ function Home() {
               <Timer />
             </div>
           )}
-
+          {/* 
           {token ? (
             <div className=" flex justify-center align-middle mb-32">
               <button
@@ -257,7 +274,13 @@ function Home() {
                 Login
               </button>
             </div>
-          )}
+          )} */}
+          <StartEndWorkButton
+            token={token}
+            buttonActive={buttonActive}
+            onOpen={onOpen}
+            handleSlideComplete={handleSlideComplete}
+          />
         </div>
         <Modal
           classNames={{ backdrop: "z-[99999]", wrapper: "z-[99999]" }}
