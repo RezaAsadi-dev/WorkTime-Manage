@@ -53,7 +53,7 @@
 }
 
 .dark .nav-item.active {
-  background-color: rgb(238, 73, 73);
+  background-color: #ee4949;
   color: white;
 }
 

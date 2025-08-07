@@ -8,18 +8,20 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import { Divider } from "@heroui/react";
+import { useLogout } from "../../config/apiHooks/useAdmin";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile({ userData }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { mutate: logout, isPending: logoutLoading } = useLogout();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.clear();
-    localStorage.removeItem("platintoken");
-    localStorage.removeItem("workstatus");
-    localStorage.removeItem("workTimer");
-    localStorage.removeItem("lastWorkDuration");
-    localStorage.removeItem("timeIntervals");
-    window.location.href = "/home";
+    logout(undefined, {
+      onSuccess: () => {
+        navigate("/login");
+      },
+    });
   };
 
   return (
@@ -43,17 +45,27 @@ export default function UserProfile({ userData }) {
         <ModalContent className="py-4 bg-gradient-to-b from-[#262626] to-[#0a0a0a]">
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 text-white">
+              <ModalHeader className="flex flex-col text-white">
                 Are you sure you want to logout?
               </ModalHeader>
               <Divider />
               <ModalBody>
-                <div className="w-full mt-4 flex justify-between items-center gap-4">
-                  <Button color="danger" variant="flat" onPress={handleLogout}>
+                <div className="w-full mt-4 flex justify-between items-center">
+                  <Button
+                    className="bg-red-500 text-white px-10 py-3"
+                    onPress={handleLogout}
+                    variant="flat"
+                    isLoading={logoutLoading}
+                  >
                     Yes, logout
                   </Button>
-                  <Button color="primary" variant="light" onPress={onClose}>
-                    No, stay
+                  <Button
+                    className="bg-gray-500 text-white px-5 py-3"
+                    color="default"
+                    variant="light"
+                    onPress={onClose}
+                  >
+                    Cancel
                   </Button>
                 </div>
               </ModalBody>

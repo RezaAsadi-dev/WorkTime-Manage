@@ -9,18 +9,20 @@ import { Divider } from "@heroui/react";
 import { Form, Input, Button } from "@heroui/react";
 import "./style.css";
 import { useState, useEffect } from "react";
-import axiosInstance from "../../utils/axiosConfig";
 import { toast } from "react-toastify";
 import { CardStack, Highlight } from "../../components/card";
-import { fetchUserProfile } from "../../hook/hook";
 import Timer from "../../components/Timer/Timer";
 import useGeoLocation from "../../hook/geoLocation";
 import StartEndWorkButton from "../../components/StartEndWorkButton/StartEndWorkButton";
-
-const BASE_URL = import.meta.env.VITE_MAIN_ADDRESS;
-const userLogin = "api/employee/login";
-const checkInEndpoint = "api/employee/checkin";
-const checkOutEndpoint = "api/employee/checkout";
+import {
+  useProfile,
+  useCheckIn,
+  useCheckOut,
+  useLogin,
+  useEmployeeStatus,
+} from "../../config/apiHooks/useAdmin";
+import Layout from "../../layout";
+import { div } from "framer-motion/client";
 
 function Home() {
   const [token, setToken] = useState(localStorage.getItem("platintoken"));
@@ -30,10 +32,8 @@ function Home() {
   const [buttonActive, setButtonActive] = useState(
     localStorage.getItem("workstatus") === "IN"
   );
-  const [userProfile, setUserProfile] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [confirmEndModal, setConfirmEndModal] = useState(false);
-  const [loginLoader, setLoginLoader] = useState(false);
   const now = new Date();
 
   const options = {
@@ -53,6 +53,21 @@ function Home() {
     passwoard: false,
   });
 
+  // React Query hooks
+  const {
+    data: userProfile,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useProfile();
+  const { mutateAsync: mutateCheckIn } = useCheckIn();
+  const { mutateAsync: mutateCheckOut } = useCheckOut();
+  const { mutate: loginMutation, isPending: loginLoading } = useLogin();
+  const {
+    data: employeeStatus,
+    refetch: refetchEmployeeStatus,
+    isLoading: statusLoading,
+  } = useEmployeeStatus();
+
   useEffect(() => {
     setToken(localStorage.getItem("platintoken"));
     const workStatus = localStorage.getItem("workstatus");
@@ -61,75 +76,52 @@ function Home() {
       setButtonActive(true);
     }
   }, []);
+  // Replace buttonActive and checkIn state with API status
+  const checkedIn = employeeStatus?.checked_in;
+  const checkedOut = employeeStatus?.checked_out;
 
+  const checkInTime = employeeStatus?.check_in_time;
+  const checkOutTime = employeeStatus?.check_out_time;
+
+  // In handleSlideComplete, refetch status after check-in/out
   const handleSlideComplete = async () => {
     if (!localStorage.getItem("platintoken")) {
       onOpen();
       return;
     }
-
-    if (!checkIn) {
+    if (!checkedIn) {
       await handleCheckIn();
     } else {
       setConfirmEndModal(true);
     }
+    refetchEmployeeStatus();
   };
 
+  // In handleCheckIn and handleCheckOut, refetch status after action
   const handleCheckIn = async () => {
     try {
-      const response = await axiosInstance.get(
-        `${BASE_URL}/${checkInEndpoint}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.status === 200) {
-        setCheckIn(true);
-        setButtonActive(true);
-        localStorage.setItem("workstatus", "IN");
-        localStorage.removeItem("workTimer");
+      const data = await mutateCheckIn();
+      if (data?.status === 200) {
         toast.success("Your task has started successfully");
       } else {
-        setCheckIn(false);
-        setButtonActive(false);
-        localStorage.removeItem("workstatus");
-        toast.error(response.data.message);
+        toast.error(data?.message || "خطا در شروع کار");
       }
+      refetchEmployeeStatus();
     } catch (err) {
-      toast.error("An issue has occurred");
       console.log(err);
+      toast.error("An issue has occurred");
     }
   };
-
   const handleCheckOut = async () => {
     try {
-      const response = await axiosInstance.get(
-        `${BASE_URL}/${checkOutEndpoint}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.status === 200) {
-        setCheckIn(false);
-        setButtonActive(false);
-
-        // Clear all timer related data
-        localStorage.removeItem("lastWorkDuration");
-        localStorage.removeItem("workstatus");
-        localStorage.removeItem("workTimer");
-        localStorage.removeItem("timeIntervals");
-
+      const data = await mutateCheckOut();
+      if (data?.status === 200) {
         toast.success("Your task was completed successfully");
         setConfirmEndModal(false);
+      } else {
+        toast.error(data?.message || "خطا در پایان کار");
       }
+      refetchEmployeeStatus();
     } catch (err) {
       console.error("Check-out failed:", err);
       toast.error("Error completing the task");
@@ -156,42 +148,24 @@ function Home() {
     };
 
     setUserErrors(errors);
-
     const hasError = Object.values(errors).some((err) => err);
     if (hasError) return;
-    setLoginLoader(true);
 
-    try {
-      const response = await axiosInstance.post(
-        `${BASE_URL}/${userLogin}`,
-        userDatas,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+    loginMutation(userDatas, {
+      onSuccess: (data) => {
+        if (data.status === 200) {
+          localStorage.setItem("platintoken", data.token);
+          setToken(data.token);
+          toast.success("Login successful");
+          onOpenChange();
+          window.location.reload();
         }
-      );
-      setLoginLoader(false);
-
-      if (response.data.status === 200) {
-        localStorage.setItem("platintoken", response.data.token);
-        setToken(response.data.token);
-        toast.success("Login successful");
-        onOpenChange();
-        window.location.reload();
-      }
-    } catch (err) {
-      setLoginLoader(false);
-      console.error("Login failed:", err);
-      toast.error("Login failed");
-    }
-  };
-
-  useEffect(() => {
-    fetchUserProfile().then((data) => {
-      setUserProfile(data);
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.message || "Login failed");
+      },
     });
-  }, [token]);
+  };
 
   const CARDS = [
     {
@@ -222,64 +196,87 @@ function Home() {
   ];
 
   return (
-    <>
+    <Layout>
       <div className="container m-auto w-full  ">
-        {/* {location && <p>{location.lat}</p>}
-        {location && <p>{location.lng}</p>}
-        {error && <p>{error}</p>} */}
         <div className="w-full  flex-col items-center justify-start">
-          {userProfile && (
+          {userProfile && !profileLoading && (
             <div>
               <CardStack items={CARDS} />
             </div>
           )}
 
-          {token && buttonActive && (
-            <div className="my-8">
-              <Timer />
+          {profileLoading && (
+            <div className="text-center py-8">
+              <p className="text-white">Loading profile...</p>
             </div>
           )}
-          {/* 
-          {token ? (
-            <div className=" flex justify-center align-middle mb-32">
-              <button
-                onClick={() => {
-                  if (!localStorage.getItem("platintoken")) {
-                    onOpen();
-                  } else {
-                    handleSlideComplete();
-                  }
-                }}
-                className={`group duration-500 before:duration-500 after:duration-500 underline underline-offset-2 relative ${
-                  buttonActive
-                    ? " bg-[rgb(238,73,73)] underline underline-offset-4 decoration-2 text-white after:-right-2 before:top-8 before:right-16 after:scale-150 after:blur-none before:-bottom-8 before:blur-none before:bg-black after:bg-[#262626]"
-                    : "bg-gradient-to-b from-[#262626] to-[#0a0a0a] text-gray-50 after:right-8 after:top-3 before:right-1 before:top-1 before:blur-lg after:blur before:bg-red-700 after:bg-[rgb(238,73,73)]"
-                } h-16 w-[90%] border text-left p-3 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:z-10 before:rounded-full after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:rounded-full`}
-              >
-                {buttonActive ? "End Work" : "Start Work"}
-              </button>
+
+          {profileError && (
+            <div className="text-center py-8">
+              <p className="text-[#ee4949]">Error loading profile</p>
             </div>
-          ) : (
-            <div className=" flex justify-center align-middle">
-              <button
-                onClick={() => {
-                  onOpen();
-                }}
-                className={`group duration-500 before:duration-500 after:duration-500 underline underline-offset-2 relative ${
-                  buttonActive
-                    ? " bg-[rgb(238,73,73)] underline underline-offset-4 decoration-2 text-white after:-right-2 before:top-8 before:right-16 after:scale-150 after:blur-none before:-bottom-8 before:blur-none before:bg-black after:bg-[#262626]"
-                    : "bg-gradient-to-b from-[#262626] to-[#0a0a0a] text-gray-50 after:right-8 after:top-3 before:right-1 before:top-1 before:blur-lg after:blur before:bg-red-700 after:bg-[rgb(238,73,73)]"
-                } h-16 w-[90%] border text-left p-3 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:z-10 before:rounded-full after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:rounded-full`}
-              >
-                Login
-              </button>
+          )}
+
+          {token && (checkedIn || checkedOut) && (
+            <div className="mb-12 m-auto relative  w-[90%]  md:w-[90%]">
+              <div className=" bg-gradient-to-b from-[#262626] to-[#0a0a0a]    w-full md:h-60 md:w-full rounded-3xl p-4 shadow-xl border border-[rgba(238,73,73,0.68)] flex flex-col justify-between ">
+                <h2 className="text-2xl font-bold text-[#ee4949] mb-6 text-center tracking-wide">
+                  Attendance Info
+                </h2>
+
+                {checkedIn && (
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-gray-300 font-medium">
+                      Check-in Time:
+                    </span>
+                    <span className="text-green-400 font-semibold">
+                      {checkInTime}
+                    </span>
+                  </div>
+                )}
+
+                {checkedOut && (
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-gray-300 font-medium">
+                      Check-out Time:
+                    </span>
+                    <span className="text-red-400 font-semibold">
+                      {checkOutTime}
+                    </span>
+                  </div>
+                )}
+
+                {checkedIn && checkedOut && (
+                  <div className="mt-6 pt-4 border-t border-gray-700 flex justify-between items-center">
+                    <span className="text-white font-semibold">
+                      Total Worked:
+                    </span>
+                    <span className="text-[#ee4949] font-bold tracking-wider">
+                      {(() => {
+                        const inTime = new Date(`1970-01-01T${checkInTime}`);
+                        const outTime = new Date(`1970-01-01T${checkOutTime}`);
+                        const diffMs = outTime - inTime;
+                        const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                        const minutes = Math.floor(
+                          (diffMs % (1000 * 60 * 60)) / (1000 * 60)
+                        );
+                        return `${hours}h ${minutes}m`;
+                      })()}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          )} */}
+          )}
+
           <StartEndWorkButton
             token={token}
-            buttonActive={buttonActive}
+            buttonActive={checkedIn}
             onOpen={onOpen}
             handleSlideComplete={handleSlideComplete}
+            statusLoading={statusLoading}
+            checkedIn={checkedIn}
+            checkedOut={checkedOut}
           />
         </div>
         <Modal
@@ -350,7 +347,7 @@ function Home() {
                         className=" bg-green-500 text-white px-10 py-3"
                         type="submit"
                         variant="flat"
-                        isLoading={loginLoader}
+                        isLoading={loginLoading}
                       >
                         submit
                       </Button>
@@ -412,7 +409,7 @@ function Home() {
           </ModalContent>
         </Modal>
       </div>
-    </>
+    </Layout>
   );
 }
 

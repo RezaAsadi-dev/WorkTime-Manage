@@ -5,12 +5,16 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { HeroUIProvider } from "@heroui/react";
 import { ToastContainer } from "react-toastify";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./config/queryClient";
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <HeroUIProvider>
-        <App />
+      <QueryClientProvider client={queryClient}>
+        <HeroUIProvider>
+          <App />
         <ToastContainer
           position="top-center"
           style={{  zIndex: 100000 }}
@@ -23,8 +27,9 @@ createRoot(document.getElementById("root")).render(
           draggable
           pauseOnHover
           theme="dark"
-        />
-      </HeroUIProvider>
+          />
+        </HeroUIProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
 );

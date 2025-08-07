@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, replace, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Navigation.css";
 import home from "../../assets/home.svg";
@@ -10,11 +10,12 @@ const Navigation = ({ theme = "dark" }) => {
   const [activeTab, setActiveTab] = useState(
     location.pathname === "/home" ? "home" : location.pathname.slice(1)
   );
-
+  const navigate = useNavigate();
   const handleTabClick = (e, tab) => {
     const token = localStorage.getItem("platintoken");
     if (!token) {
       e.preventDefault();
+      navigate("/login", { replace: true });
       toast.error("Please log in first");
       return;
     }

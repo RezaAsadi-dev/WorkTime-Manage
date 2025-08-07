@@ -43,7 +43,7 @@ export default function TracingBeamDemo({
           <div>
             <span className="font-normal text-sm">Contract start date:</span>
             <span className="infomationDetails ml-2">
-              {userProfile?.contractStartDate}
+              {userProfile?.contract_start}
             </span>
           </div>
           <div>
@@ -51,7 +51,7 @@ export default function TracingBeamDemo({
               Contract expiration date:
             </span>
             <span className="infomationDetails ml-2">
-              {userProfile?.contractExpirationDate}
+              {userProfile?.contract_end}
             </span>
           </div>
           <div>
@@ -60,7 +60,7 @@ export default function TracingBeamDemo({
             </span>
             <span className="infomationDetails ml-2">
               <img src={toman} alt="toman" className="w-4 h-4 inline-block" />{" "}
-              {Number(userProfile?.basicHourlySalary).toLocaleString()}
+              {userProfile?.salary ? Number(userProfile.salary).toLocaleString() : "0"}
             </span>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function TracingBeamDemo({
                         />{" "}
                         {calculateTotalPay(
                           timesheet.total_time,
-                          userProfile?.basicHourlySalary
+                          userProfile?.salary
                         ).toLocaleString()}
                       </td>
                     </tr>

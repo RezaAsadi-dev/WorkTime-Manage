@@ -1,23 +1,53 @@
 import { useState, useEffect, useCallback } from "react";
 
-const Timer = () => {
+const Timer = ({ checkInTime, checkedIn }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [startTime, setStartTime] = useState(null);
+
+  // Sync with checkInTime from API
+  useEffect(() => {
+    if (checkedIn && checkInTime) {
+      // Parse checkInTime (HH:mm) to today timestamp
+      const now = new Date();
+      const [h, m] = checkInTime.split(":").map(Number);
+      const checkInDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+      let diff = Math.floor((Date.now() - checkInDate.getTime()) / 1000);
+      if (diff < 0) diff = 0; // اگر تایمر منفی شد، صفر نمایش بده
+      setStartTime(checkInDate.getTime());
+      setTime(diff);
+      setIsRunning(true);
+    } else if (!checkedIn) {
+      setIsRunning(false);
+      setTime(0);
+      setStartTime(null);
+    }
+  }, [checkInTime, checkedIn]);
 
   // Handle tab closing
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (isRunning && startTime) {
         const currentTime = Math.floor((Date.now() - startTime) / 1000);
-        localStorage.setItem(
-          "workTimer",
-          JSON.stringify({
-            startTime,
-            elapsedTime: currentTime,
-            lastUpdated: Date.now(),
-          })
-        );
+        if (currentTime < 0) {
+          localStorage.setItem(
+            "workTimer",
+            JSON.stringify({
+              startTime,
+              elapsedTime: 0,
+              lastUpdated: Date.now(),
+            })
+          );
+        } else {
+          localStorage.setItem(
+            "workTimer",
+            JSON.stringify({
+              startTime,
+              elapsedTime: currentTime,
+              lastUpdated: Date.now(),
+            })
+          );
+        }
       }
     };
 
@@ -40,7 +70,8 @@ const Timer = () => {
       if (savedTimer) {
         const timerData = JSON.parse(savedTimer);
         const timePassed = Math.floor((Date.now() - timerData.lastUpdated) / 1000);
-        const totalElapsedTime = timerData.elapsedTime + timePassed;
+        let totalElapsedTime = timerData.elapsedTime + timePassed;
+        if (totalElapsedTime < 0) totalElapsedTime = 0;
         
         // Update the timer data in localStorage
         localStorage.setItem(
@@ -77,7 +108,8 @@ const Timer = () => {
   // Save timer state to localStorage whenever it changes
   useEffect(() => {
     if (isRunning && startTime) {
-      const currentTime = Math.floor((Date.now() - startTime) / 1000);
+      let currentTime = Math.floor((Date.now() - startTime) / 1000);
+      if (currentTime < 0) currentTime = 0;
       localStorage.setItem(
         "workTimer",
         JSON.stringify({
@@ -99,7 +131,8 @@ const Timer = () => {
         if (savedTimer) {
           const timerData = JSON.parse(savedTimer);
           const timePassed = Math.floor((Date.now() - timerData.lastUpdated) / 1000);
-          const totalElapsedTime = timerData.elapsedTime + timePassed;
+          let totalElapsedTime = timerData.elapsedTime + timePassed;
+          if (totalElapsedTime < 0) totalElapsedTime = 0;
           setTime(totalElapsedTime);
         }
       }, 1000);
@@ -119,7 +152,8 @@ const Timer = () => {
           if (savedTimer) {
             const timerData = JSON.parse(savedTimer);
             const timePassed = Math.floor((Date.now() - timerData.lastUpdated) / 1000);
-            const totalElapsedTime = timerData.elapsedTime + timePassed;
+            let totalElapsedTime = timerData.elapsedTime + timePassed;
+            if (totalElapsedTime < 0) totalElapsedTime = 0;
             
             setStartTime(timerData.startTime);
             setTime(totalElapsedTime);

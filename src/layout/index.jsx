@@ -2,24 +2,21 @@ import React, { useEffect, useState } from "react";
 import { BackgroundBeamsWithCollision } from "../components/BackgroundBeamsWithCollision/BackgroundBeamsWithCollision";
 import UserProfile from "../components/userProfile";
 import platinLogo from "../assets/platin.png";
-import { fetchUserProfile, useRealVh } from "../hook/hook";
+import { useRealVh } from "../hook/hook";
+import { useProfile } from "../config/apiHooks/useAdmin";
 import Navigation from "../components/Navigation/Navigation";
 
 const Layout = ({ children }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [token, setToken] = useState(localStorage.getItem("platintoken"));
-  const [userProfile, setUserProfile] = useState(null);
+
+  // React Query for user profile
+  const { data: userProfile, isLoading: profileLoading } = useProfile();
 
   useEffect(() => {
     setToken(localStorage.getItem("platintoken"));
   }, [localStorage.getItem("platintoken")]);
-
-  useEffect(() => {
-    fetchUserProfile().then((data) => {
-      setUserProfile(data);
-    });
-  }, [token]);
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -77,7 +74,7 @@ const Layout = ({ children }) => {
             <div className=" text-white">
               <img className="w-[250px] m-auto" src={platinLogo} alt="" />
               <div className="mt-8 p-2">
-                {userProfile && token && (
+                {!profileLoading && userProfile && token && (
                   <div>
                     <UserProfile userData={userProfile} />
                   </div>
